@@ -13,7 +13,6 @@ import (
 type UpsertPayload struct {
 	DeviceID      string
 	IP            string
-	Name          string
 	UserAgent     string
 	AuthToken     string
 	FCMToken      string
@@ -41,12 +40,12 @@ func (s Service) Upsert(payload UpsertPayload) {
 		// If not exist, create new
 		stm, args, _ := s.Builder.Insert(TableDeviceMngt).
 			Columns(
-				"id", "device_id", "ip", "name", "platform",
+				"id", "device_id", "ip", "platform",
 				"os_name", "os_version", "browser_name", "browser_version",
 				"auth_token", "fcm_token", "owner_id", "owner_type",
 				"first_sign_in_at", "last_activity_at",
 			).Values(
-			mongodb.NewStringID(), payload.DeviceID, payload.IP, payload.Name, platform,
+			mongodb.NewStringID(), payload.DeviceID, payload.IP, platform,
 			osInfo.Name, osInfo.Version, browserName, browserVersion,
 			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
@@ -62,7 +61,6 @@ func (s Service) Upsert(payload UpsertPayload) {
 		// Else update
 		stm, args, _ := s.Builder.Update(TableDeviceMngt).
 			Set("ip", payload.IP).
-			Set("name", payload.Name).
 			Set("platform", platform).
 			Set("os_name", osInfo.Name).
 			Set("os_version", osInfo.Version).

@@ -7,7 +7,6 @@ type Device struct {
 	ID             string    `db:"id"`
 	DeviceID       string    `db:"device_id"`
 	IP             string    `db:"ip"`
-	Name           string    `db:"name"`
 	Platform       string    `db:"platform"`
 	OSName         string    `db:"os_name"`
 	OSVersion      string    `db:"os_version"`
@@ -25,7 +24,6 @@ type Device struct {
 type ResponseDevice struct {
 	ID            string          `json:"id"`
 	IP            string          `json:"ip"`
-	Name          string          `json:"name"`
 	Platform      string          `json:"platform"`
 	OS            ResponseOS      `json:"os"`
 	Browser       ResponseBrowser `json:"browser"`

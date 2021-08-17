@@ -37,7 +37,6 @@ func (s Service) FindAllDevicesByOwnerID(ownerID string) []ResponseDevice {
 		result = append(result, ResponseDevice{
 			ID:       doc.ID,
 			IP:       doc.IP,
-			Name:     doc.Name,
 			Platform: doc.Platform,
 			OS: ResponseOS{
 				Name:    doc.OSName,

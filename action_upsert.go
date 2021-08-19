@@ -7,7 +7,6 @@ import (
 
 	"github.com/Selly-Modules/logger"
 	"github.com/Selly-Modules/mongodb"
-	"github.com/kr/pretty"
 	ua "github.com/mssola/user_agent"
 )
 
@@ -71,20 +70,17 @@ func (s Service) Upsert(payload UpsertPayload) {
 		appVersionCode = headerData.AppVersionCode
 	}
 
-	pretty.Println("- platform", platform)
-	pretty.Println("- osName", osName)
-	pretty.Println("- osVersion", osVersion)
-	pretty.Println("- appVersion", appVersion)
-	pretty.Println("- appVersionCode", appVersionCode)
-	pretty.Println("- browserName", browserName)
-	pretty.Println("- browserVersion", browserVersion)
-	pretty.Println("----------------")
+	// pretty.Println("- platform", platform)
+	// pretty.Println("- osName", osName)
+	// pretty.Println("- osVersion", osVersion)
+	// pretty.Println("- appVersion", appVersion)
+	// pretty.Println("- appVersionCode", appVersionCode)
+	// pretty.Println("- browserName", browserName)
+	// pretty.Println("- browserVersion", browserVersion)
+	// pretty.Println("----------------")
 
 	// Find device id existed or not
 	device := s.findByDeviceID(ctx, deviceID)
-
-	pretty.Println("device.ID", device.ID)
-	pretty.Println("mongodb.IsValidID(device.ID)", mongodb.IsValidID(device.ID))
 
 	if !mongodb.IsValidID(device.ID) {
 		// If not exist, create new
@@ -100,8 +96,6 @@ func (s Service) Upsert(payload UpsertPayload) {
 			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
 		).ToSql()
-
-		pretty.Println("Create new")
 
 		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Create new", logger.LogData{
@@ -127,8 +121,6 @@ func (s Service) Upsert(payload UpsertPayload) {
 			Set("last_activity_at", now()).
 			Where("device_id = ?", deviceID).
 			ToSql()
-
-		pretty.Println("Update")
 
 		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Update", logger.LogData{

@@ -2,6 +2,7 @@ package devicemngt
 
 import (
 	"context"
+	"net/http"
 
 	"github.com/Selly-Modules/logger"
 )
@@ -18,4 +19,16 @@ func (s Service) findByDeviceID(ctx context.Context, id string) (result Device) 
 	}
 
 	return
+}
+
+// getHeaderData ...
+func getHeaderData(headers http.Header) HeaderData {
+	return HeaderData{
+		UserAgent:      headers.Get("User-Agent"),
+		DeviceID:       headers.Get("Deviceid"),
+		AppVersion:     headers.Get("App-Version"),
+		AppVersionCode: headers.Get("App-Version-Code"),
+		OSName:         headers.Get("Os-Name"),
+		OSVersion:      headers.Get("Os-Version"),
+	}
 }

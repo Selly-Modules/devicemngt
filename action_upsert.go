@@ -13,7 +13,6 @@ import (
 
 // UpsertPayload ...
 type UpsertPayload struct {
-	DeviceID      string
 	IP            string
 	Headers       http.Header
 	AuthToken     string
@@ -27,9 +26,6 @@ type UpsertPayload struct {
 func (s Service) Upsert(payload UpsertPayload) {
 	ctx := context.Background()
 
-	// Find device id existed or not
-	device := s.findByDeviceID(ctx, payload.DeviceID)
-
 	// Read UA
 	var (
 		headerData = getHeaderData(payload.Headers)
@@ -38,6 +34,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 
 	// DB data
 	var (
+		deviceID       = ""
 		platform       = ""
 		osName         = ""
 		osVersion      = ""
@@ -46,6 +43,15 @@ func (s Service) Upsert(payload UpsertPayload) {
 		browserName    = ""
 		browserVersion = ""
 	)
+
+	// Set deviceID
+	deviceID = headerData.DeviceID
+	if deviceID == "" {
+		logger.Error("devicemngt - Upsert: no device_id data", logger.LogData{
+			"payload": payload,
+		})
+		return
+	}
 
 	// OS, if there is os name, means mobile app, else browser
 	if headerData.OSName != "" {
@@ -73,6 +79,9 @@ func (s Service) Upsert(payload UpsertPayload) {
 	pretty.Println("browserName", browserName)
 	pretty.Println("browserVersion", browserVersion)
 
+	// Find device id existed or not
+	device := s.findByDeviceID(ctx, deviceID)
+
 	if !mongodb.IsValidID(device.ID) {
 		// If not exist, create new
 		stm, args, _ := s.Builder.Insert(TableDeviceMngt).
@@ -82,14 +91,14 @@ func (s Service) Upsert(payload UpsertPayload) {
 				"auth_token", "fcm_token", "owner_id", "owner_type",
 				"first_sign_in_at", "last_activity_at",
 			).Values(
-			mongodb.NewStringID(), payload.DeviceID, payload.IP, platform, appVersion,
+			mongodb.NewStringID(), deviceID, payload.IP, platform, appVersion,
 			appVersionCode, osName, osVersion, browserName, browserVersion,
 			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
 		).ToSql()
 
 		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
-			logger.Error("devicemngt - Upsert - Create new", logger.LogData{
+			logger.Error("devicemngt - Upsert: Create new", logger.LogData{
 				"payload": payload,
 				"error":   err.Error(),
 			})
@@ -110,11 +119,11 @@ func (s Service) Upsert(payload UpsertPayload) {
 			Set("owner_id", payload.OwnerID).
 			Set("owner_type", payload.OwnerType).
 			Set("last_activity_at", now()).
-			Where("device_id = ?", payload.DeviceID).
+			Where("device_id = ?", deviceID).
 			ToSql()
 
 		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
-			logger.Error("devicemngt - Upsert - Update", logger.LogData{
+			logger.Error("devicemngt - Upsert: Update", logger.LogData{
 				"payload": payload,
 				"error":   err.Error(),
 			})

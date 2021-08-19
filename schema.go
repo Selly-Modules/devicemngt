@@ -9,7 +9,6 @@ const DeviceManagementSchema = `
 	        PRIMARY KEY,
 	    device_id text NOT NULL UNIQUE,
 			ip text NOT NULL,
-			name text NOT NULL,
 			platform text NOT NULL,
 			os_name text NOT NULL,
 			os_version text NOT NULL,

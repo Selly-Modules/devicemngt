@@ -42,3 +42,13 @@ type ResponseBrowser struct {
 	Name    string `json:"name"`
 	Version string `json:"version"`
 }
+
+// HeaderData ...
+type HeaderData struct {
+	UserAgent      string
+	DeviceID       string
+	AppVersion     string
+	AppVersionCode string
+	OSName         string
+	OSVersion      string
+}

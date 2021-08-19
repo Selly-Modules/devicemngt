@@ -13,6 +13,8 @@ const DeviceManagementSchema = `
 			platform text NOT NULL,
 			os_name text NOT NULL,
 			os_version text NOT NULL,
+			app_version text NOT NULL,
+			app_version_code text NOT NULL,
 			browser_name text NOT NULL,
 			browser_version text NOT NULL,
 			auth_token text NOT NULL,

@@ -2,10 +2,12 @@ package devicemngt
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/Selly-Modules/logger"
 	"github.com/Selly-Modules/mongodb"
+	"github.com/kr/pretty"
 	ua "github.com/mssola/user_agent"
 )
 
@@ -13,7 +15,7 @@ import (
 type UpsertPayload struct {
 	DeviceID      string
 	IP            string
-	UserAgent     string
+	Headers       http.Header
 	AuthToken     string
 	FCMToken      string
 	OwnerID       string
@@ -30,23 +32,58 @@ func (s Service) Upsert(payload UpsertPayload) {
 
 	// Read UA
 	var (
-		uaData                      = ua.New(payload.UserAgent)
-		platform                    = uaData.Platform()
-		osInfo                      = uaData.OSInfo()
-		browserName, browserVersion = uaData.Browser()
+		headerData = getHeaderData(payload.Headers)
+		uaData     = ua.New(headerData.UserAgent)
 	)
+
+	// DB data
+	var (
+		platform       = ""
+		osName         = ""
+		osVersion      = ""
+		appVersion     = ""
+		appVersionCode = ""
+		browserName    = ""
+		browserVersion = ""
+	)
+
+	// OS, if there is os name, means mobile app, else browser
+	if headerData.OSName != "" {
+		platform = headerData.OSName
+		osName = headerData.OSName
+		osVersion = headerData.OSVersion
+	} else {
+		platform = uaData.Platform()
+		osName = uaData.OSInfo().Name
+		osVersion = uaData.OSInfo().Version
+		browserName, browserVersion = uaData.Browser()
+	}
+
+	// App version
+	if headerData.AppVersion != "" {
+		appVersion = headerData.AppVersion
+		appVersionCode = headerData.AppVersionCode
+	}
+
+	pretty.Println("platform", platform)
+	pretty.Println("osName", osName)
+	pretty.Println("osVersion", osVersion)
+	pretty.Println("appVersion", appVersion)
+	pretty.Println("appVersionCode", appVersionCode)
+	pretty.Println("browserName", browserName)
+	pretty.Println("browserVersion", browserVersion)
 
 	if !mongodb.IsValidID(device.ID) {
 		// If not exist, create new
 		stm, args, _ := s.Builder.Insert(TableDeviceMngt).
 			Columns(
-				"id", "device_id", "ip", "platform",
-				"os_name", "os_version", "browser_name", "browser_version",
+				"id", "device_id", "ip", "platform", "app_version",
+				"app_version_code", "os_name", "os_version", "browser_name", "browser_version",
 				"auth_token", "fcm_token", "owner_id", "owner_type",
 				"first_sign_in_at", "last_activity_at",
 			).Values(
-			mongodb.NewStringID(), payload.DeviceID, payload.IP, platform,
-			osInfo.Name, osInfo.Version, browserName, browserVersion,
+			mongodb.NewStringID(), payload.DeviceID, payload.IP, platform, appVersion,
+			appVersionCode, osName, osVersion, browserName, browserVersion,
 			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
 		).ToSql()
@@ -62,8 +99,10 @@ func (s Service) Upsert(payload UpsertPayload) {
 		stm, args, _ := s.Builder.Update(TableDeviceMngt).
 			Set("ip", payload.IP).
 			Set("platform", platform).
-			Set("os_name", osInfo.Name).
-			Set("os_version", osInfo.Version).
+			Set("app_version", appVersion).
+			Set("app_version_code", appVersionCode).
+			Set("os_name", osName).
+			Set("os_version", osVersion).
 			Set("browser_name", browserName).
 			Set("browser_version", browserVersion).
 			Set("auth_token", payload.AuthToken).

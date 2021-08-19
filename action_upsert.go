@@ -83,6 +83,9 @@ func (s Service) Upsert(payload UpsertPayload) {
 	// Find device id existed or not
 	device := s.findByDeviceID(ctx, deviceID)
 
+	pretty.Println("device.ID", device.ID)
+	pretty.Println("mongodb.IsValidID(device.ID)", mongodb.IsValidID(device.ID))
+
 	if !mongodb.IsValidID(device.ID) {
 		// If not exist, create new
 		stm, args, _ := s.Builder.Insert(TableDeviceMngt).
@@ -99,8 +102,6 @@ func (s Service) Upsert(payload UpsertPayload) {
 		).ToSql()
 
 		pretty.Println("Create new")
-		pretty.Println("stm -", stm)
-		pretty.Println("args -", args)
 
 		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Create new", logger.LogData{
@@ -128,8 +129,6 @@ func (s Service) Upsert(payload UpsertPayload) {
 			ToSql()
 
 		pretty.Println("Update")
-		pretty.Println("stm -", stm)
-		pretty.Println("args -", args)
 
 		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Update", logger.LogData{

@@ -10,6 +10,8 @@ type Device struct {
 	Platform       string    `db:"platform"`
 	OSName         string    `db:"os_name"`
 	OSVersion      string    `db:"os_version"`
+	AppVersion     string    `db:"app_version"`
+	AppVersionCode string    `db:"app_version_code"`
 	BrowserName    string    `db:"browser_name"`
 	BrowserVersion string    `db:"browser_version"`
 	AuthToken      string    `db:"auth_token"`

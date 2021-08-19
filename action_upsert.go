@@ -71,13 +71,14 @@ func (s Service) Upsert(payload UpsertPayload) {
 		appVersionCode = headerData.AppVersionCode
 	}
 
-	pretty.Println("platform", platform)
-	pretty.Println("osName", osName)
-	pretty.Println("osVersion", osVersion)
-	pretty.Println("appVersion", appVersion)
-	pretty.Println("appVersionCode", appVersionCode)
-	pretty.Println("browserName", browserName)
-	pretty.Println("browserVersion", browserVersion)
+	pretty.Println("- platform", platform)
+	pretty.Println("- osName", osName)
+	pretty.Println("- osVersion", osVersion)
+	pretty.Println("- appVersion", appVersion)
+	pretty.Println("- appVersionCode", appVersionCode)
+	pretty.Println("- browserName", browserName)
+	pretty.Println("- browserVersion", browserVersion)
+	pretty.Println("----------------")
 
 	// Find device id existed or not
 	device := s.findByDeviceID(ctx, deviceID)
@@ -96,6 +97,10 @@ func (s Service) Upsert(payload UpsertPayload) {
 			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
 		).ToSql()
+
+		pretty.Println("Create new")
+		pretty.Println("stm -", stm)
+		pretty.Println("args -", args)
 
 		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
 			logger.Error("devicemngt - Upsert: Create new", logger.LogData{
@@ -121,6 +126,10 @@ func (s Service) Upsert(payload UpsertPayload) {
 			Set("last_activity_at", now()).
 			Where("device_id = ?", deviceID).
 			ToSql()
+
+		pretty.Println("Update")
+		pretty.Println("stm -", stm)
+		pretty.Println("args -", args)
 
 		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
 			logger.Error("devicemngt - Upsert: Update", logger.LogData{

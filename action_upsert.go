@@ -102,7 +102,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 		pretty.Println("stm -", stm)
 		pretty.Println("args -", args)
 
-		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
+		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Create new", logger.LogData{
 				"payload": payload,
 				"error":   err.Error(),
@@ -131,7 +131,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 		pretty.Println("stm -", stm)
 		pretty.Println("args -", args)
 
-		if _, err := s.DB.ExecContext(ctx, stm, args); err != nil {
+		if _, err := s.DB.ExecContext(ctx, stm, args...); err != nil {
 			logger.Error("devicemngt - Upsert: Update", logger.LogData{
 				"payload": payload,
 				"error":   err.Error(),

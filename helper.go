@@ -30,5 +30,6 @@ func getHeaderData(headers http.Header) HeaderData {
 		AppVersionCode: headers.Get("App-Version-Code"),
 		OSName:         headers.Get("Os-Name"),
 		OSVersion:      headers.Get("Os-Version"),
+		AuthToken:      headers.Get("Authorization"),
 	}
 }

@@ -53,4 +53,5 @@ type HeaderData struct {
 	AppVersionCode string
 	OSName         string
 	OSVersion      string
+	AuthToken      string
 }

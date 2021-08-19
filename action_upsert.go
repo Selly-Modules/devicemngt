@@ -41,6 +41,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 		appVersionCode = ""
 		browserName    = ""
 		browserVersion = ""
+		authToken      = ""
 	)
 
 	// Set deviceID
@@ -70,6 +71,13 @@ func (s Service) Upsert(payload UpsertPayload) {
 		appVersionCode = headerData.AppVersionCode
 	}
 
+	// Auth token
+	if headerData.AuthToken != "" {
+		authToken = headerData.AuthToken
+	} else {
+		authToken = payload.AuthToken
+	}
+
 	// pretty.Println("- platform", platform)
 	// pretty.Println("- osName", osName)
 	// pretty.Println("- osVersion", osVersion)
@@ -93,7 +101,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 			).Values(
 			mongodb.NewStringID(), deviceID, payload.IP, platform, appVersion,
 			appVersionCode, osName, osVersion, browserName, browserVersion,
-			payload.AuthToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
+			authToken, payload.FCMToken, payload.OwnerID, payload.OwnerType,
 			payload.FirstSignInAt, now(),
 		).ToSql()
 
@@ -114,7 +122,7 @@ func (s Service) Upsert(payload UpsertPayload) {
 			Set("os_version", osVersion).
 			Set("browser_name", browserName).
 			Set("browser_version", browserVersion).
-			Set("auth_token", payload.AuthToken).
+			Set("auth_token", authToken).
 			Set("fcm_token", payload.FCMToken).
 			Set("owner_id", payload.OwnerID).
 			Set("owner_type", payload.OwnerType).

@@ -62,5 +62,6 @@ type StaffPermissions struct {
 	Name        string   `db:"name"`
 	Permissions []string `db:"permissions"`
 	AccountType string   `db:"account_type"`
+	Active      bool     `db:"active"`
 	DeviceID    string   `db:"device_id"`
 }

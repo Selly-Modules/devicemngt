@@ -3,6 +3,7 @@ package devicemngt
 import (
 	"context"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/Selly-Modules/logger"
@@ -73,7 +74,8 @@ func (s Service) Upsert(payload UpsertPayload) {
 
 	// Auth token
 	if headerData.AuthToken != "" {
-		authToken = headerData.AuthToken
+		// Get token only, remove "Bearer "
+		authToken = strings.Split(headerData.AuthToken, " ")[1]
 	} else {
 		authToken = payload.AuthToken
 	}

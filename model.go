@@ -1,6 +1,10 @@
 package devicemngt
 
-import "time"
+import (
+	"time"
+
+	"github.com/lib/pq"
+)
 
 // Device ...
 type Device struct {
@@ -58,10 +62,10 @@ type HeaderData struct {
 
 // StaffPermissions ...
 type StaffPermissions struct {
-	ID          string   `db:"id"`
-	Name        string   `db:"name"`
-	Permissions []string `db:"permissions"`
-	AccountType string   `db:"account_type"`
-	Active      bool     `db:"active"`
-	DeviceID    string   `db:"device_id"`
+	ID          string         `db:"id"`
+	Name        string         `db:"name"`
+	Permissions pq.StringArray `db:"permissions"`
+	AccountType string         `db:"account_type"`
+	Active      bool           `db:"active"`
+	DeviceID    string         `db:"device_id"`
 }

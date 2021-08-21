@@ -56,8 +56,8 @@ type HeaderData struct {
 	AuthToken      string
 }
 
-// StaffDevicePermissions ...
-type StaffDevicePermissions struct {
+// StaffPermissions ...
+type StaffPermissions struct {
 	ID          string   `db:"id"`
 	Name        string   `db:"name"`
 	Permissions []string `db:"permissions"`

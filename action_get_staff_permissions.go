@@ -7,8 +7,8 @@ import (
 	"github.com/Selly-Modules/logger"
 )
 
-// GetDevicePermissionsByToken ...
-func (s Service) GetDevicePermissionsByToken(token string) (doc StaffDevicePermissions) {
+// GetStaffPermissionsByToken ...
+func (s Service) GetStaffPermissionsByToken(token string) (doc StaffPermissions) {
 	ctx := context.Background()
 
 	stm, args, _ := s.Builder.
@@ -19,7 +19,7 @@ func (s Service) GetDevicePermissionsByToken(token string) (doc StaffDevicePermi
 		Where("dm.auth_token = ?", token).
 		ToSql()
 	if err := s.DB.GetContext(ctx, &doc, stm, args...); err != nil {
-		logger.Error("devicemngt - GetDevicePermissionsByToken", logger.LogData{
+		logger.Error("devicemngt - GetStaffPermissionsByToken", logger.LogData{
 			"token": token,
 			"error": err.Error(),
 		})

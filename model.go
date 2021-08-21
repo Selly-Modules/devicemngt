@@ -59,6 +59,8 @@ type HeaderData struct {
 // StaffDevicePermissions ...
 type StaffDevicePermissions struct {
 	ID          string   `db:"id"`
+	Name        string   `db:"name"`
 	Permissions []string `db:"permissions"`
 	AccountType string   `db:"account_type"`
+	DeviceID    string   `db:"device_id"`
 }

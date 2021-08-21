@@ -12,7 +12,7 @@ func (s Service) GetDevicePermissionsByToken(token string) (doc StaffDevicePermi
 	ctx := context.Background()
 
 	stm, args, _ := s.Builder.
-		Select("dm.id, s.account_type, sr.permissions").
+		Select("dm.id AS device_id, s.id, s.name, s.account_type, sr.permissions").
 		From(fmt.Sprintf("%s AS dm", TableDeviceMngt)).
 		Join(fmt.Sprintf("LEFT JOIN %s s ON s.id = dm.owner_id", TableStaff)).
 		Join(fmt.Sprintf("LEFT JOIN %s sr ON s.role_id = sr.id", TableStaffRole)).

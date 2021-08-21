@@ -55,3 +55,10 @@ type HeaderData struct {
 	OSVersion      string
 	AuthToken      string
 }
+
+// StaffDevicePermissions ...
+type StaffDevicePermissions struct {
+	ID          string   `db:"id"`
+	Permissions []string `db:"permissions"`
+	AccountType string   `db:"account_type"`
+}

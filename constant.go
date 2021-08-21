@@ -3,6 +3,8 @@ package devicemngt
 // Constant ...
 const (
 	TableDeviceMngt = "device_managements"
+	TableStaff      = "staffs"
+	TableStaffRole  = "staff_roles"
 
 	OwnerTypeStaff  = "staff"
 	OwnerTypeSeller = "seller"
